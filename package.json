@@ -1,0 +1,22 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "![Project Image](project-image-url)",
+  "main": "employees.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FisherE20/Employee-Tracker.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mysql": "^2.16.0"
+  },
+  "bugs": {
+    "url": "https://github.com/FisherE20/Employee-Tracker/issues"
+  },
+  "homepage": "https://github.com/FisherE20/Employee-Tracker#readme"
+}
