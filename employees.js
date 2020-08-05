@@ -71,3 +71,48 @@ function runSearch() {
     }
   });
 }
+
+function employeeSearch() {
+  var query = "SELECT * FROM employee";
+  connection.query(query, function(err, res) {
+    if (err) throw err;
+    for (var i = 0; i < res.length; i++) {
+      console.table(res[i]);
+    }
+    runSearch();
+  });
+}
+
+function departmentSearch() {
+  inquirer
+    .prompt({
+      name: "department",
+      type: "list",
+      message: "What department would you like to search for?",
+      choices:[
+        "Engineering",
+        "Finances",
+        "Legal",
+        "Sales"
+      ]
+    })
+    .then(function(answer){
+      // console.log(answer.department);
+      connection.query("SELECT department FROM employee WHERE ?", { department: answer.department}, function(err, res) {
+        if (err) throw err;
+        console.log(
+          // "Department: "+
+          //   res[0].department +
+          "First Name: " +
+            res[0].first_name +
+            " || Last Name: " +
+            res[0].last_name +
+            " || Title: " +
+            res[0].title +
+            " || Manager: " +
+            res[0].manager
+        );
+        runSearch();
+      });
+    })
+}
