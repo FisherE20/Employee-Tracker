@@ -12,7 +12,7 @@ var connection = mysql.createConnection({
 
   // Your password
   password: "F1shB0wl2020!",
-  database: "employeeDB"
+  database: "employeesDB"
 });
 
 connection.connect(function(err) {
@@ -53,6 +53,7 @@ function runSearch() {
       break;
 
     case "Add Employee":
+      newEmployee();
       break;
 
     case "Remove Employee":
@@ -76,9 +77,8 @@ function employeeSearch() {
   var query = "SELECT * FROM employee";
   connection.query(query, function(err, res) {
     if (err) throw err;
-    for (var i = 0; i < res.length; i++) {
-      console.table(res[i]);
-    }
+    
+    console.table(res);
     runSearch();
   });
 }
@@ -96,23 +96,74 @@ function departmentSearch() {
         "Sales"
       ]
     })
-    .then(function(answer){
+    .then(function(department_name){
       // console.log(answer.department);
-      connection.query("SELECT department FROM employee WHERE ?", { department: answer.department}, function(err, res) {
+      connection.query("SELECT employee.id, emloyee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ",  function(err, res) {
         if (err) throw err;
-        console.log(
-          // "Department: "+
-          //   res[0].department +
-          "First Name: " +
-            res[0].first_name +
-            " || Last Name: " +
-            res[0].last_name +
-            " || Title: " +
-            res[0].title +
-            " || Manager: " +
-            res[0].manager
-        );
+
+        console.table(res);
         runSearch();
       });
     })
+}
+
+function managerSearch() {
+  inquirer
+    .prompt({
+      name: "manager",
+      type: "list",
+      message: "What manager would you like to search for?",
+      choices:[
+        "Ashley Rodriguez",
+        "John Doe",
+        "Sarah Lourd",
+        "Kevin Tupik"
+      ]
+    })
+    .then(function(answer) {
+      // console.log(answer.manager_id);
+      connection.query("SELECT manager_id FROM employee",  function(err, res) {
+        if (err) throw err;
+
+        console.table(res);
+        runSearch();
+      });
+    })
+
+    // Add employee
+    function newEmployee() {
+      inquirer
+        .prompt([
+          {
+            type: "input",
+            name: "first_name",
+            message: "What is the employee's first name?",
+          },
+          {
+            type: "input",
+            name: "last_name",
+            message: "What is the employee's last name?",
+          },
+          {
+            type: "input",
+            name: "role_id",
+            message: "What is the id for this employee's role?",
+          },
+          {
+            type: "input",
+            name: "manager_id",
+            message: "What is the id for this employee's manager",
+          },
+        ])
+        .then(function (answer) {
+          connection.query(
+            `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${answer.first_name}", "${answer.last_name}", "${answer.role_id}", "${answer.manager_id}");`,
+            function (err, res) {
+              if (err) throw err;
+            }
+          );
+          console.log("Employee successfully added");
+          prompt();
+        });
+      }
 }
