@@ -1,6 +1,11 @@
 var mysql = require("mysql");
 const inquirer = require("inquirer");
 
+let departmentArr= [];
+let roleArr = [];
+let employeeArr = [];
+let managerArr = [];
+
 var connection = mysql.createConnection({
   host: "localhost",
 
@@ -88,8 +93,42 @@ function runSearch() {
       break;
     }
   });
+  // update arrays  
+  getDepartments();
+  getRoles();
+  getManagers();
 }
 
+function getDepartments() {
+  connection.query('SELECT department_name FROM departments', function (err, departments){
+    if (err) throw err;
+    departmentArr = [];
+    for (i=0; i< departments.length; i++){
+      departmentArr.push(departments[i].department_name);
+      console.log(departmentArr);
+    }
+  });
+}
+function getRoles () {
+  connection.query('SELECT title FROM roles', function (err, roles){
+    if (err) throw err;
+    rolesArr = [];
+    for (i=0; i< roles.length; i++){
+      departmentArr.push(roles[i].roles.title);
+      console.log(rolesArr);
+    }
+  });
+}
+function getManagers() {
+  connection.query('SELECT employee.last_name FROM employee', function (err, managers){
+    if (err) throw err;
+    managersArr = [];
+    for (i=0; i< managers.length; i++) {
+      managerArr.push(managers[i].last_name);
+      console.log(managersArr);
+    }
+  });
+}
 // Add Employee
   function employee() {
     inquirer. propmt([
@@ -107,37 +146,35 @@ function runSearch() {
         type: "list",
         name: "roleName",
         message: "What is this employee's role?",
-        choices: [
-          "Sales Lead",
-          "Salesperson",
-          "Lead Engingeer",
-          "Software Engingeer",
-          "Accountaant",
-          "Legal Team Lead",
-          "Lawyer"
-        ]
+        choices: rolesArr
+        
       },
       {
         type: "list",
         name: "managerName",
         message: "What is the id for employee's manager?",
-        choices: [
-          "John Doe",
-          "Ashley Rodrigez",
-          "Sarah Lourd"
-        ]
-
+        choices: managerArr
       },
     
     ])
     .then(function (answer){
-      let managerName = manager_id;
+      let roleID;
+          for (let r = 0; r < res.length; r++) {
+            if (res[r].title == answer.roleName) {
+              roleID = res[r].role_id;
+            }
+            let managerID;
+            for (let m = 0; m < res2.length; m++) {
+              if (res2[m].last_name == answer.managerName) {
+                managerID = res2[m].employee_id;
+              }
+            }
       connection.query("INSERT INTO employee SET ?",
        {
          first_name: answer.first_name, 
          last_name: answer.last_name, 
-         role_title: answer.title, 
-         managerName: answer.managerName
+         role_id: roleID, 
+         manager_id: managerID
         },
       function (err){
         if (err) throw err;
@@ -165,7 +202,7 @@ function runSearch() {
           name: "departmentName",
           type: "list",
           message: "What departemnt is your role in ?",
-          choices: deptArr,
+          choices: departmentArr,
         }
       ])
       .then (function (answer) {
@@ -201,7 +238,7 @@ function runSearch() {
     .then(function (answer) {
       connection.query("INSERT INTO departments SET ?",
       {
-        department_names: answer. departments,
+        department_name: answer. departments,
       },
       function (err) {
         if (err) throw err;
@@ -213,7 +250,7 @@ function runSearch() {
 // View all employees by department
   function departmentSearch() {
     connection.query(
-      `SELECT employee.employee_id, employee.first_name, employee.last_name, departments.department_names FROM employee 
+      `SELECT employee.employee_id, employee.first_name, employee.last_name, departments.department_name FROM employee 
     LEFT JOIN roles ON employee.role_id = roles.role_id
     LEFT JOIN departments ON roles.department_id = departments.department_id 
     ORDER BY departments.department_name`,
@@ -227,7 +264,7 @@ function runSearch() {
 // view all employees by roles
   function roleSearch() {
     connection.query(
-      `SELECT employee.employee_id, employee.first_name, employee.last_name, roles.title, roles.salary, departments.department_names FROM employee 
+      `SELECT employee.employee_id, employee.first_name, employee.last_name, roles.title, roles.salary, departments.department_name FROM employee 
       LEFT JOIN roles ON employee.role_id = roles.role_id
       LEFT JOIN departments ON roles.department_id = departments.department_id 
       ORDER BY roles.title`,
@@ -269,7 +306,7 @@ function viewManagers() {
 function allEmployees() {
   connection.query(
     `SELECT employee.employee_id, employee.first_name, employee.last_name, roles.title,
-  departments.names AS departments,roles.salary,CONCAT(a.first_name, " ", a.last_name) AS manager
+  departments.name AS departments,roles.salary,CONCAT(a.first_name, " ", a.last_name) AS manager
   FROM employee
   LEFT JOIN roles ON employee.role_id = roles.role_id
   LEFT JOIN departments ON roles.department_id = departments.department_id
