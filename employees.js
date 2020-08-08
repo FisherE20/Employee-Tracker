@@ -374,11 +374,9 @@ function updateEmployee() {
               [roleID, answer.employeeChoice],
               function (err) {
                 if (err) throw err;
-              }
-            );
-            init();
+              });
+            runSearch();
           });
       });
-    }
-  );
+    });
 }

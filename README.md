@@ -2,7 +2,7 @@
 
 ![Project Image](project-image-url)
 
->Short Project Blurb
+>Employee Tracker system
 
 ---
 
@@ -17,7 +17,9 @@
 ---
 
 ## Description
-What is this project about. Who is the User? What is the purpose of this application? 
+This app is for the owner of a business that wants an easy way to view and manage the departments, roles, and employees within his/her company
+
+
 
 #### Technologies
 
@@ -37,7 +39,7 @@ What is this project about. Who is the User? What is the purpose of this applica
 
 ```NODE
     NPM install
-    NPM start
+    NPM employees.js
 
 ```
 [Back To The Top](#Employee-Tracker)
@@ -45,6 +47,9 @@ What is this project about. Who is the User? What is the purpose of this applica
 ---
 
 ## References
+
+- YouTube  - [YouTube](https://github.com/FisherE20)
+
 [Back To The Top](#Employee-Tracker)
 
 ---
@@ -59,7 +64,7 @@ Copyright(c) [2020] [Erin K Fisher]
 
 ## Author Info
 
-- GitHub - [FisherE20](url)
-- Website - [FisherE20](url) 
+- GitHub - [FisherE20](https://github.com/FisherE20)
+- Website - [FisherE20](https://fishere20.github.io/Responsive-Portfolio/) 
 
 [Back To The Top](#Employee-Tracker)
