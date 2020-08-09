@@ -20,6 +20,25 @@ var connection = mysql.createConnection({
   database: "employeesDB",
 });
 
+const menu = [
+  {
+  name: "action",
+  type: "list",
+  message: "What would you like to do?",
+  choices: [
+    "Add Employees",
+    "View All Employees",
+    "View All Employees by Role",
+    "View All Employees by Department",
+    "View All Roles",
+    "View All Departments",
+    "Update An Employee",
+    "Add Roll",
+    "Add Department",
+    "Exit",
+  ],
+},
+];
 connection.connect(function (err) {
   if (err) throw err;
   console.log("connected as id " + connection.threadId);
@@ -27,71 +46,52 @@ connection.connect(function (err) {
 });
 
 function runSearch() {
-  inquirer
-    .prompt({
-      name: "action",
-      type: "list",
-      message: "What would you like to do?",
-      choices: [
-        "Add Employees",
-        "View All Employees",
-        "View All Employees by Role",
-        "View All Employees by Department",
-        "View All Roles",
-        "View All Departments",
-        "Update An Employee",
-        "Add Roll",
-        "Add Department",
-        "Exit",
-      ],
-    })
+  inquirer.prompt(menu).then(function (response) {
+    switch (response.list) {
+      case "Add Employees":
+        employee();
+        break;
 
-    .then(function (response) {
-      switch (response.list) {
-        case "Add Employees":
-          employee();
-          break;
+      case "Add Roll":
+        role();
+        break;
 
-        case "Add Roll":
-          role();
-          break;
+      case "Add Department":
+        department();
+        break;
 
-        case "Add Department":
-          department();
-          break;
+      case "View All Employees":
+        allEmployees();
+        break;
 
-        case "View All Employees":
-          allEmployees();
-          break;
+      case "View All Employees by Role":
+        roleSearch();
+        break;
 
-        case "View All Employees by Role":
-          roleSearch();
-          break;
+      case "View All Employees by Department":
+        departmentSearch();
+        break;
 
-        case "View All Employees by Department":
-          departmentSearch();
-          break;
+      case "View All Roles":
+        viewRoles();
+        break;
 
-        case "View All Roles":
-          viewRoles();
-          break;
+      case "View All Departments":
+        viewDepartments();
+        break;
+      case "View All Managers":
+        viewManagers();
+        break;
 
-        case "View All Departments":
-          viewDepartments();
-          break;
-        case "View All Managers":
-          viewManagers();
-          break;
+      case "Update An Employee":
+        updateEmployee();
+        break;
 
-        case "Update An Employee":
-          updateEmployee();
-          break;
-
-        case "Exit":
-          connection.end();
-          break;
-      }
-    });
+      case "Exit":
+        connection.end();
+        break;
+    }
+  });
   // update arrays
   getDepartments();
   getRoles();
@@ -117,8 +117,8 @@ function getRoles() {
     rolesArr = [];
     for (i = 0; i < roles.length; i++) {
       departmentArr.push(roles[i].roles.title);
-      console.log(rolesArr);
     }
+    console.log(roles);
   });
 }
 function getManagers() {
@@ -277,7 +277,7 @@ function departmentSearch() {
     function (err, data) {
       if (err) throw err;
       console.table(data);
-      runSearch();
+      // runSearch();
     }
   );
 }
