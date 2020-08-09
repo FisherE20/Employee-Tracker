@@ -32,6 +32,7 @@ const menu = [
     "View All Employees by Department",
     "View All Roles",
     "View All Departments",
+    "View All Managers",
     "Update An Employee",
     "Add Roll",
     "Add Department",
@@ -47,9 +48,11 @@ connection.connect(function (err) {
 
 function runSearch() {
   inquirer.prompt(menu).then(function (response) {
-    switch (response.list) {
+    console.log("User's selection from list:", response);
+    
+    switch (response.action) {
       case "Add Employees":
-        employee();
+       employee();
         break;
 
       case "Add Roll":
@@ -92,10 +95,10 @@ function runSearch() {
         break;
     }
   });
-  // update arrays
-  getDepartments();
-  getRoles();
-  getManagers();
+//   // update arrays
+//   getDepartments();
+//   getRoles();
+//   getManagers();
 }
 
 function getDepartments() {
@@ -270,7 +273,7 @@ function department() {
 // View all employees by department
 function departmentSearch() {
   connection.query(
-    `SELECT employee.employee_id, employee.first_name, employee.last_name, departments.department_name FROM employee 
+    `SELECT employee.id, employee.first_name, employee.last_name, departments.department_name FROM employee 
     LEFT JOIN roles ON employee.role_id = roles.role_id
     LEFT JOIN departments ON roles.department_id = departments.department_id 
     ORDER BY departments.department_name`,
@@ -297,27 +300,29 @@ function roleSearch() {
   );
 }
 
-// view all roles
+// // view all roles
 function viewRoles() {
   connection.query(`SELECT * FROM roles`, function (err, data) {
     if (err) throw err;
     console.table(data);
-    runSearch();
+    
   });
+  runSearch();
 }
 
-// view all departments
+// // view all departments
 function viewDepartments() {
   connection.query(`SELECT * FROM departments`, function (err, data) {
     if (err) throw err;
     console.table(data);
-    runSearch();
+    
   });
+  runSearch();
 }
 
 // view all managers
 function viewManagers() {
-  connection.query(`SELECT * FROM employee WHERE ? = manager_id`, function (
+  connection.query("SELECT * FROM employee WHERE manager_id = employee.last_name", function (
     err,
     data
   ) {
@@ -354,7 +359,7 @@ function updateEmployee() {
       for (i = 0; i < employees.length; i++) {
         emplArr.push(employees[i].Name);
       }
-      connection.query("SELECT * FROM role", function (err, res2) {
+      connection.query("SELECT * FROM roles", function (err, res2) {
         if (err) throw err;
         inquirer
           .prompt([
