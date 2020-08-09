@@ -322,7 +322,7 @@ function viewDepartments() {
 
 // view all managers
 function viewManagers() {
-  connection.query("SELECT * FROM employee WHERE manager_id = employee.last_name", function (
+  connection.query(`SELECT * FROM employee WHERE ? = manager_id`, function (
     err,
     data
   ) {

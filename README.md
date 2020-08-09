@@ -1,6 +1,6 @@
 # Employee-Tracker
 
-![Project Image](project-image-url)
+![Project Image](assets/img/snap.png)
 
 >Employee Tracker system
 
